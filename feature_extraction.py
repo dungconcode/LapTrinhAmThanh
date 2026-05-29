@@ -39,38 +39,38 @@ def get_all_musical_features(
     # FEATURE EXTRACTION
     # ======================================================
 
-    tempo, _ = librosa.beat.beat_track(y=y, sr=sr)
+    tempo, _ = librosa.beat.beat_track(y=y, sr=sr) #tính nhịp độ bài hát
 
-    chroma_stft = librosa.feature.chroma_stft(y=y, sr=sr)
+    chroma_stft = librosa.feature.chroma_stft(y=y, sr=sr) #tính chroma stft
 
-    rmse = librosa.feature.rms(y=y)
+    rmse = librosa.feature.rms(y=y) #tính root mean square energy (RMSE) - năng lượng của tín hiệu âm thanh
 
     spec_cent = librosa.feature.spectral_centroid(
         y=y,
         sr=sr
-    )
+    ) #tính spectral centroid - vị trí trung bình của phổ âm thanh
 
     spec_bw = librosa.feature.spectral_bandwidth(
         y=y,
         sr=sr
-    )
+    ) #tính spectral bandwidth - độ rộng phổ âm thanh
 
     rolloff = librosa.feature.spectral_rolloff(
         y=y,
         sr=sr
-    )
+    ) #tính spectral rolloff - tần số mà phổ âm thanh giảm xuống dưới một ngưỡng nhất định 
 
-    zcr = librosa.feature.zero_crossing_rate(y)
+    zcr = librosa.feature.zero_crossing_rate(y) #tính zero crossing rate - tốc độ thay đổi dấu của tín hiệu âm thanh
 
     mfcc = librosa.feature.mfcc(
         y=y,
         sr=sr,
         n_mfcc=20
-    )
+    )#tính Mel-frequency cepstral coefficients (MFCCs) - đặc trưng phổ âm thanh được sử dụng rộng rãi trong nhận dạng âm thanh
 
-    harmony = librosa.effects.harmonic(y)
+    harmony = librosa.effects.harmonic(y)#tách phần hài hòa của tín hiệu âm thanh
 
-    percussive = librosa.effects.percussive(y)
+    percussive = librosa.effects.percussive(y) #tách phần gõ của tín hiệu âm thanh
 
     # ======================================================
     # FEATURE DICTIONARY
@@ -78,13 +78,13 @@ def get_all_musical_features(
 
     features = {
 
-        'length': len(y),
+        'length': len(y), #độ dài của tín hiệu âm thanh (số mẫu)
 
-        'chroma_stft_mean': np.mean(chroma_stft),
-        'chroma_stft_var': np.var(chroma_stft),
+        'chroma_stft_mean': np.mean(chroma_stft), #tính giá trị trung bình của chroma stft`
+        'chroma_stft_var': np.var(chroma_stft), #tính giá trị phương sai của chroma stft
 
-        'rms_mean': np.mean(rmse),
-        'rms_var': np.var(rmse),
+        'rms_mean': np.mean(rmse),#tính giá trị trung bình của RMSE
+        'rms_var': np.var(rmse),#tính giá trị phương sai của RMSE
 
         'spectral_centroid_mean': np.mean(spec_cent),
         'spectral_centroid_var': np.var(spec_cent),
@@ -107,7 +107,7 @@ def get_all_musical_features(
         'tempo': tempo[0]
         if isinstance(tempo, (list, np.ndarray))
         else tempo
-    }
+    }#tính giá trị trung bình và phương sai của các đặc trưng đã trích xuất, đồng thời lưu vào một dictionary có tên là features
 
     # ======================================================
     # MFCC FEATURES
@@ -115,9 +115,9 @@ def get_all_musical_features(
 
     for i in range(20):
 
-        features[f'mfcc{i+1}_mean'] = np.mean(mfcc[i])
+        features[f'mfcc{i+1}_mean'] = np.mean(mfcc[i])#tính giá trị trung bình của hệ số MFCC thứ i và lưu vào dictionary features với tên khóa tương ứng
 
-        features[f'mfcc{i+1}_var'] = np.var(mfcc[i])
+        features[f'mfcc{i+1}_var'] = np.var(mfcc[i])#tính giá trị trung bình và phương sai của từng hệ số MFCC và lưu vào dictionary features với tên khóa tương ứng
 
     # ======================================================
     # CHROMA CQT
@@ -165,7 +165,7 @@ def extract_single_song(wav_path):
 
     except Exception as e:
 
-        print(f"❌ Lỗi khi xử lý file {wav_path}: {e}")
+        print(f"Lỗi khi xử lý file {wav_path}: {e}")
 
         return None
 
@@ -220,7 +220,7 @@ if __name__ == '__main__':
     if total_songs == 0:
 
         print(
-            "❌ Không tìm thấy dataset!"
+            "Không tìm thấy dataset!"
         )
 
     else:
@@ -228,11 +228,11 @@ if __name__ == '__main__':
         num_processors = min(16, cpu_count())
 
         print(
-            f"🚀 Tìm thấy {total_songs} bài hát."
+            f"Tìm thấy {total_songs} bài hát."
         )
 
         print(
-            f"⚡ Đang dùng {num_processors} nhân CPU..."
+            f"Đang dùng {num_processors} nhân CPU..."
         )
 
         # ==================================================
@@ -256,7 +256,7 @@ if __name__ == '__main__':
         ]
 
         print(
-            "✅ Đã trích xuất xong!"
+            "Đã trích xuất xong!"
         )
 
         # ==================================================
@@ -312,7 +312,7 @@ if __name__ == '__main__':
         )
 
         print(
-            f"💾 Đã lưu CSV: {output_csv_path}"
+            f"Đã lưu CSV: {output_csv_path}"
         )
 
         # ==================================================
@@ -330,7 +330,7 @@ if __name__ == '__main__':
             connection_string = (f"mysql+pymysql://{username}:{password}@{host}:{port}/{database_name}")
 
             print(
-                "🔄 Đang kết nối MySQL..."
+                "Đang kết nối MySQL..."
             )
             engine = create_engine(
                 connection_string
@@ -340,7 +340,7 @@ if __name__ == '__main__':
             with engine.connect() as conn:
 
                 print(
-                    "✅ Kết nối MySQL thành công!"
+                    "Kết nối MySQL thành công!"
                 )
 
             # RESET INDEX
@@ -355,7 +355,7 @@ if __name__ == '__main__':
             )
 
             print(
-                "🔄 Đang ghi dữ liệu vào bảng songs_features..."
+                "Đang ghi dữ liệu vào bảng songs_features..."
             )
 
             # SAVE MYSQL
@@ -367,15 +367,15 @@ if __name__ == '__main__':
             )
 
             print(
-                "🎉 Đã lưu dữ liệu vào MySQL!"
+                "Đã lưu dữ liệu vào MySQL!"
             )
 
         except Exception as e:
 
             print(
-                f"❌ Lỗi MySQL: {e}"
+                f"Lỗi MySQL: {e}"
             )
 
         print(
-            "🚀 HOÀN THÀNH!"
+            "HOÀN THÀNH!"
         )
